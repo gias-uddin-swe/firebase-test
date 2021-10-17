@@ -7,8 +7,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
 import { useEffect, useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+
 FirebaseInit();
 
 const useFirebase = () => {
@@ -18,11 +21,14 @@ const useFirebase = () => {
   const [user, setUser] = useState({});
   const [error, setError] = useState("");
 
+  const history = useHistory();
+
   const googleSignIn = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
         setUser(result.user);
         setError("");
+        history.push("/home");
       })
       .catch((error) => {
         setError(error.message);
@@ -33,6 +39,7 @@ const useFirebase = () => {
       .then((result) => {
         setUser(result.user);
         setError("");
+        history.push("/home");
       })
       .catch((error) => {
         setError(error.message);
@@ -47,6 +54,7 @@ const useFirebase = () => {
       .then((result) => {
         setUser(result.user);
         setError("");
+        history.push("/home");
       })
       .catch((error) => {
         setError(error.message);
@@ -60,6 +68,7 @@ const useFirebase = () => {
         setUser(result.user);
         console.log(result.user);
         setError("");
+        history.push("/home");
       })
       .catch((error) => {
         setError(error.message);
@@ -76,6 +85,16 @@ const useFirebase = () => {
     });
   }, []);
 
+  const handleLogOut = () => {
+    signOut(auth)
+      .then(() => {
+        setUser({});
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+  };
+
   return {
     googleSignIn,
     githubSignIn,
@@ -83,6 +102,7 @@ const useFirebase = () => {
     handleLogin,
     user,
     error,
+    handleLogOut,
   };
 };
 export default useFirebase;

@@ -1,50 +1,55 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
 import "./App.css";
-import useFirebase from "./Hook/useFirebase";
 import Header from "./components/Header/Header";
+import Login from "./components/Login/Login";
+import Contact from "./components/Contact/Contact";
+import Payment from "./components/Payment/Payment";
+import Home from "./components/Home/Home";
+import Error from "./components/Error/Error";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useParams,
+  useRouteMatch,
+} from "react-router-dom";
+import AuthProvider from "./components/AuthProvider/AuthProvider";
+import About from "./components/About/About";
+import PrivateRoute from "./components/PrivateRoute/PrivateRoute";
 
 function App() {
-  const { googleSignIn, githubSignIn, handleUserRegister, handleLogin, user } =
-    useFirebase();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleEmail = (e) => {
-    setEmail(e.target.value);
-  };
-  const handlePassword = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const handleSubmit = () => {
-    handleUserRegister(email, password);
-  };
-  const handleSignIn = () => {
-    handleLogin(email, password);
-  };
-
   return (
     <div className="App">
-      <Header user={user}></Header>
-      <h1>Hello App.js</h1>
-      <button onClick={googleSignIn}>google sign in</button>
-      <button className="m-2" onClick={githubSignIn}>
-        Github sign in
-      </button>
-
-      <div className="form-input">
-        <input onChange={handleEmail} className="mt-2" type="email" />
-        <br />
-        <input onChange={handlePassword} className="mt-2" type="password" />
-        <br />
-        <button onClick={handleSubmit} className="mt-2">
-          Register
-        </button>
-        <button onClick={handleSignIn} className="mt-2">
-          Login
-        </button>
-      </div>
+      <AuthProvider>
+        <Router>
+          <Header></Header>
+          <Switch>
+            <Route exact path="/">
+              <Home></Home>
+            </Route>
+            <Route exact path="/home">
+              <Home></Home>
+            </Route>
+            <Route exact path="/about">
+              <About></About>
+            </Route>
+            <Route exact path="/login">
+              <Login></Login>
+            </Route>
+            <Route exact path="/contact">
+              <Contact></Contact>
+            </Route>
+            <PrivateRoute exact path="/payment">
+              <Payment></Payment>
+            </PrivateRoute>
+            <Route path="/*">
+              <Error></Error>
+            </Route>
+          </Switch>
+        </Router>
+      </AuthProvider>
     </div>
   );
 }
